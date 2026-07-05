@@ -1,8 +1,8 @@
 #!/bin/bash
 # SPDX-License-Identifier: MIT
-# Build RPMs from the latest stable Xerotier binaries.
+# Build RPMs from the latest stable Erebine binaries.
 #
-# Resolves the latest release of Xerotier/binaries, downloads the Linux
+# Resolves the latest release of Erebine/binaries, downloads the Linux
 # binaries for this host architecture, and packages them with rpmbuild.
 #
 # Env:
@@ -11,7 +11,7 @@
 set -euo pipefail
 
 HERE="$(cd "$(dirname "$0")" && pwd)"
-REPO="Xerotier/binaries"
+REPO="Erebine/binaries"
 ARCH="$(uname -m)"
 
 AUTH=()
@@ -29,7 +29,7 @@ WORK="$HERE/build"
 SOURCES="$WORK/SOURCES"
 mkdir -p "$SOURCES"
 
-for bin in xeroctl xerotier-xim-agent xerotier-xem-agent; do
+for bin in erectl erebine-eim-agent erebine-eem-agent; do
   echo "==> ${bin}-Linux-${ARCH} (${TAG})"
   curl -fSL ${AUTH[@]+"${AUTH[@]}"} -o "$SOURCES/$bin" \
     "https://github.com/${REPO}/releases/download/${TAG}/${bin}-Linux-${ARCH}"

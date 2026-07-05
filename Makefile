@@ -1,4 +1,4 @@
-# Xerotier RPM packaging Makefile
+# Erebine RPM packaging Makefile
 
 TAG ?=
 

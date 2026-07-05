@@ -1,15 +1,15 @@
-# Xerotier.ai RPM Packages
+# Erebine.ai RPM Packages
 
 <div style="text-align: center;">
-<img src="https://xerotier.ai/xerotier-ogimage.png" alt="Project Logo" width="50%">
+<img src="https://erebine.ai/erebine-ogimage.png" alt="Project Logo" width="50%">
 </div>
 
 A high-performance, accelerated intelligence platform.
 
-This repository builds RPM packages for the prebuilt Xerotier binaries:
-the `xeroctl` CLI, the XIM inference agent, and the XEM execution agent.
+This repository builds RPM packages for the prebuilt Erebine binaries:
+the `erectl` CLI, the XIM inference agent, and the XEM execution agent.
 The build pulls the latest stable binaries for this host's architecture
-from the [Xerotier/binaries](https://github.com/Xerotier/binaries)
+from the [Erebine/binaries](https://github.com/Erebine/binaries)
 releases, and every package declares the runtime libraries it needs, so
 installation resolves dependencies the traditional way.
 
@@ -43,9 +43,9 @@ TAG=v0.0.1 ./build.sh
 
 | Package | Binary | Dependencies |
 | --- | --- | --- |
-| `xeroctl` | `/usr/bin/xeroctl` | libzstd, libcurl, ca-certificates |
-| `xerotier-xim-agent` | `/usr/bin/xerotier-xim-agent` | zeromq, libsodium, libzstd |
-| `xerotier-xem-agent` | `/usr/bin/xerotier-xem-agent` | zeromq, libsodium, libzstd, libcurl, ca-certificates |
+| `erectl` | `/usr/bin/erectl` | libzstd, libcurl, ca-certificates |
+| `erebine-eim-agent` | `/usr/bin/erebine-eim-agent` | zeromq, libsodium, libzstd |
+| `erebine-eem-agent` | `/usr/bin/erebine-eem-agent` | zeromq, libsodium, libzstd, libcurl, ca-certificates |
 
 ## Services
 
@@ -54,16 +54,16 @@ XEM the router URL and registration name) in the env file, then enable
 the service:
 
 ``` shell
-sudoedit /etc/xerotier/xim-agent.env
-sudo systemctl enable --now xerotier-xim-agent
+sudoedit /etc/erebine/eim-agent.env
+sudo systemctl enable --now erebine-eim-agent
 
-sudoedit /etc/xerotier/xem-agent.env
-sudo systemctl enable --now xerotier-xem-agent
+sudoedit /etc/erebine/eem-agent.env
+sudo systemctl enable --now erebine-eem-agent
 ```
 
-Both services run as the `xerotier` system user (created on install)
-and keep state under `/var/lib/xerotier`. The agents enroll on first
+Both services run as the `erebine` system user (created on install)
+and keep state under `/var/lib/erebine`. The agents enroll on first
 start using the join key from their env file.
 
 Documentation for running the binaries can be found in the
-[docs](https://xerotier.ai/docs/private-agents).
+[docs](https://erebine.ai/docs/private-agents).

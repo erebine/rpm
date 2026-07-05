@@ -1,19 +1,19 @@
 # SPDX-License-Identifier: MIT
-# Packages the prebuilt xeroctl binary from Xerotier/binaries releases.
+# Packages the prebuilt erectl binary from Erebine/binaries releases.
 # Built by ../build.sh, which downloads the binary and defines pkgver.
 
 %global debug_package %{nil}
 %global __os_install_post %{nil}
 
-Name:           xeroctl
+Name:           erectl
 Version:        %{?pkgver}%{!?pkgver:0}
 Release:        1%{?dist}
-Summary:        Xerotier command-line client
+Summary:        Erebine command-line client
 License:        MIT
-Vendor:         Xerotier
-Packager:       Xerotier <hello@xerotier.ai>
-URL:            https://xerotier.ai
-Source0:        xeroctl
+Vendor:         Erebine
+Packager:       Erebine <hello@erebine.ai>
+URL:            https://erebine.ai
+Source0:        erectl
 Source1:        LICENSE
 
 Requires:       libzstd
@@ -21,7 +21,7 @@ Requires:       libcurl
 Requires:       ca-certificates
 
 %description
-Command-line client for the Xerotier API: models, endpoints, embeddings,
+Command-line client for the Erebine API: models, endpoints, embeddings,
 batches, and platform management.
 
 %prep
@@ -31,11 +31,11 @@ batches, and platform management.
 # Prebuilt binary release; nothing to build.
 
 %install
-install -D -m 0755 %{SOURCE0} %{buildroot}%{_bindir}/xeroctl
+install -D -m 0755 %{SOURCE0} %{buildroot}%{_bindir}/erectl
 install -D -m 0644 %{SOURCE1} %{buildroot}%{_datadir}/licenses/%{name}/LICENSE
 
 %files
 %license %{_datadir}/licenses/%{name}/LICENSE
-%{_bindir}/xeroctl
+%{_bindir}/erectl
 
 %changelog
