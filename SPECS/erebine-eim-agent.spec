@@ -1,7 +1,8 @@
 # SPDX-License-Identifier: MIT
 # Packages the prebuilt erebine-eim-agent binary from Erebine/binaries
-# releases. Built by ../build.sh, which downloads the binary and defines
-# pkgver.
+# releases. Built by ../build.sh, which downloads the binary and the
+# release's LICENSE and THIRD_PARTY_NOTICES and defines pkgver and
+# erebine_tag.
 
 %global debug_package %{nil}
 %global __os_install_post %{nil}
@@ -18,7 +19,8 @@ URL:            https://erebine.ai
 Source0:        erebine-eim-agent
 Source1:        erebine-eim-agent.service
 Source2:        eim-agent.env
-Source3:        LICENSE
+Source100:      https://github.com/Erebine/binaries/releases/download/%{erebine_tag}/LICENSE
+Source101:      https://github.com/Erebine/binaries/releases/download/%{erebine_tag}/THIRD_PARTY_NOTICES
 
 # zeromq and libsodium ship in EPEL on RHEL and friends.
 Requires:       zeromq
@@ -33,6 +35,8 @@ with a join key and serves inference traffic. Set the join key in
 
 %prep
 # Prebuilt binary release; nothing to unpack.
+cp -p %{SOURCE100} LICENSE
+cp -p %{SOURCE101} THIRD_PARTY_NOTICES
 
 %build
 # Prebuilt binary release; nothing to build.
@@ -41,7 +45,6 @@ with a join key and serves inference traffic. Set the join key in
 install -D -m 0755 %{SOURCE0} %{buildroot}%{_bindir}/erebine-eim-agent
 install -D -m 0644 %{SOURCE1} %{buildroot}%{_unitdir}/erebine-eim-agent.service
 install -D -m 0644 %{SOURCE2} %{buildroot}%{_sysconfdir}/erebine/eim-agent.env
-install -D -m 0644 %{SOURCE3} %{buildroot}%{_datadir}/licenses/%{name}/LICENSE
 
 %pre
 getent group erebine >/dev/null || groupadd -r erebine
@@ -62,7 +65,7 @@ fi
 systemctl daemon-reload >/dev/null 2>&1 || :
 
 %files
-%license %{_datadir}/licenses/%{name}/LICENSE
+%license LICENSE THIRD_PARTY_NOTICES
 %{_bindir}/erebine-eim-agent
 %{_unitdir}/erebine-eim-agent.service
 %dir %{_sysconfdir}/erebine

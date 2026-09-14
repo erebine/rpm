@@ -36,13 +36,22 @@ for bin in erectl erebine-eim-agent erebine-eem-agent; do
   chmod 0755 "$SOURCES/$bin"
 done
 
-# Systemd units, env-file templates, and the license text.
-cp "$HERE"/systemd/* "$HERE/LICENSE" "$SOURCES"/
+# The release's LICENSE and generated third-party notices (Source100 and
+# Source101). Releases after v1.13.0 attach them.
+for asset in LICENSE THIRD_PARTY_NOTICES; do
+  curl -fSL ${AUTH[@]+"${AUTH[@]}"} -o "$SOURCES/$asset" \
+    "https://github.com/${REPO}/releases/download/${TAG}/${asset}" \
+    || { echo "release ${TAG} has no ${asset} asset"; exit 1; }
+done
+
+# Systemd units and env-file templates.
+cp "$HERE"/systemd/* "$SOURCES"/
 
 for spec in "$HERE"/SPECS/*.spec; do
   echo "==> rpmbuild $(basename "$spec")"
   rpmbuild -bb "$spec" \
     --define "pkgver $VERSION" \
+    --define "erebine_tag $TAG" \
     --define "_topdir $WORK" \
     --define "_sourcedir $SOURCES"
 done
