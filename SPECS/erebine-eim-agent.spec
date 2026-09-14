@@ -1,21 +1,30 @@
 # SPDX-License-Identifier: MIT
 # Packages the prebuilt erebine-eim-agent binary from Erebine/binaries
-# releases. Built by ../build.sh, which downloads the binary and the
-# release's LICENSE and THIRD_PARTY_NOTICES and defines pkgver and
-# erebine_tag.
+# releases. Built by ../build.sh, which downloads the binary, the
+# release's generated erebine-license.spec.inc, LICENSE and
+# THIRD_PARTY_NOTICES, and defines pkgver and erebine_tag.
 
 %global debug_package %{nil}
 %global __os_install_post %{nil}
 %{!?_unitdir:%global _unitdir /usr/lib/systemd/system}
 
+# The licensing metadata generated for the tag being packaged, fetched into
+# the source directory by ../build.sh. It defines the project URL, the list
+# of license files to install, and one SPDX License expression per binary.
+# The binaries link their Swift dependencies statically, so the License tag
+# must state those terms too; a flat MIT states only Erebine's own. Macros
+# are deliberately not named in these comments: rpm expands macros in spec
+# comments.
+%include %{_sourcedir}/erebine-license.spec.inc
+
 Name:           erebine-eim-agent
 Version:        %{?pkgver}%{!?pkgver:0}
 Release:        1%{?dist}
 Summary:        Erebine XIM inference agent
-License:        MIT
+License:        %{erebine_license_erebine_eim_agent}
 Vendor:         Erebine
 Packager:       Erebine <hello@erebine.ai>
-URL:            https://erebine.ai
+URL:            %{erebine_url}
 Source0:        erebine-eim-agent
 Source1:        erebine-eim-agent.service
 Source2:        eim-agent.env
@@ -65,7 +74,7 @@ fi
 systemctl daemon-reload >/dev/null 2>&1 || :
 
 %files
-%license LICENSE THIRD_PARTY_NOTICES
+%license %{erebine_license_files}
 %{_bindir}/erebine-eim-agent
 %{_unitdir}/erebine-eim-agent.service
 %dir %{_sysconfdir}/erebine

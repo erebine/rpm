@@ -29,19 +29,27 @@ WORK="$HERE/build"
 SOURCES="$WORK/SOURCES"
 mkdir -p "$SOURCES"
 
+# The release's generated licensing metadata, fetched into %{_sourcedir} for
+# the tag being packaged. erebine-license.spec.inc is generated from the
+# dependency pins THIS tag's binaries were linked from; the specs %include it
+# and take their License: tag from its per-binary SPDX expression. LICENSE and
+# THIRD_PARTY_NOTICES are the texts each package installs as %license
+# (Source100 and Source101). Releases cut before the licensing change carry
+# none of the three; packaging one fails here rather than producing a package
+# whose License: tag states only Erebine's own terms. Fetched before the
+# binaries so an unpackageable tag fails without downloading them.
+for asset in erebine-license.spec.inc LICENSE THIRD_PARTY_NOTICES; do
+  curl -fSL ${AUTH[@]+"${AUTH[@]}"} -o "$SOURCES/$asset" \
+    "https://github.com/${REPO}/releases/download/${TAG}/${asset}" \
+    || { echo "release ${TAG} has no ${asset} asset: it predates the generated"; \
+         echo "licensing metadata. Package a release that carries it."; exit 1; }
+done
+
 for bin in erectl erebine-eim-agent erebine-eem-agent; do
   echo "==> ${bin}-Linux-${ARCH} (${TAG})"
   curl -fSL ${AUTH[@]+"${AUTH[@]}"} -o "$SOURCES/$bin" \
     "https://github.com/${REPO}/releases/download/${TAG}/${bin}-Linux-${ARCH}"
   chmod 0755 "$SOURCES/$bin"
-done
-
-# The release's LICENSE and generated third-party notices (Source100 and
-# Source101). Releases after v1.13.0 attach them.
-for asset in LICENSE THIRD_PARTY_NOTICES; do
-  curl -fSL ${AUTH[@]+"${AUTH[@]}"} -o "$SOURCES/$asset" \
-    "https://github.com/${REPO}/releases/download/${TAG}/${asset}" \
-    || { echo "release ${TAG} has no ${asset} asset"; exit 1; }
 done
 
 # Systemd units and env-file templates.
