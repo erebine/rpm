@@ -56,5 +56,29 @@ jobs:
             gh release create "$TAG" --repo "${{ github.repository }}" \
               --title "$TAG" --notes "Erebine RPM packages for binaries release $TAG" || \
             gh release view "$TAG" --repo "${{ github.repository }}" >/dev/null 2>&1
+          # A copy of every package under an unversioned name, so an install
+          # can fetch releases/latest/download/erectl.x86_64.rpm without
+          # looking a version up first. Copied and not renamed: the versioned
+          # filename is uploaded beside it and stays the way to pin.
+          #
+          # The architecture stays in the alias and must not be simplified
+          # out of it. Both runners in the matrix upload to this one release
+          # and --clobber lets the last write win in silence, so a shared
+          # arch-less name would have the aarch64 job replace the x86_64
+          # package with a binary that will not run on the machine that
+          # fetched it.
+          #
+          # The architecture is the RPMS subdirectory rpmbuild sorted the
+          # package into, and the name is what is left once the version and
+          # release are cut from the end -- the last two hyphen-separated
+          # fields, neither of which may itself contain a hyphen, which is
+          # what keeps the hyphens in erebine-eim-agent out of it.
+          mkdir -p build/generic
+          for rpm in build/RPMS/*/*.rpm; do
+            arch="${rpm%/*}"; arch="${arch##*/}"
+            base="${rpm##*/}"
+            stem="${base%.${arch}.rpm}"
+            cp "$rpm" "build/generic/${stem%-*-*}.${arch}.rpm"
+          done
           gh release upload "$TAG" --repo "${{ github.repository }}" --clobber \
-            build/RPMS/*/*.rpm
+            build/RPMS/*/*.rpm build/generic/*.rpm

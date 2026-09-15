@@ -1,0 +1,54 @@
+---
+# License compliance for this repository (work order WI-11).
+#
+# Runs on every pull request and every push to main. It builds the RPMs
+# against a fixture release and reads the tags back out of them, because an
+# undefined RPM macro is not an error -- it expands to its own name, so a spec
+# that misspells the generated License macro, or one whose %include was
+# dropped, still builds and ships a License: tag reading the macro text.
+#
+# The build fails when a package's License: tag is not the expression the
+# release's spec include defines for that binary, when a spec takes its tag
+# from a sibling's macro, when LICENSE or THIRD_PARTY_NOTICES is not marked
+# %license or is not the release asset it came from, when the URL tag does not
+# come from the same include, or when packaging a release with no spec include
+# produces packages anyway.
+#
+# Nothing is fetched: the fixture release is written to a temporary directory
+# and a stand-in curl on PATH serves it, so the check does not depend on any
+# Erebine/binaries release or tag existing. rpmbuild is installed the same way
+# the packaging workflow installs it. The script's own self-test runs first,
+# so a check that has stopped checking anything is reported before it is
+# trusted.
+name: License
+
+permissions:
+  contents: read
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+jobs:
+  license:
+    name: License checks
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v5
+
+      - name: Install rpmbuild
+        run: sudo apt-get update && sudo apt-get install -y rpm cpio
+
+      - name: License check self-tests
+        run: bash scripts/check-license.sh --self-test
+
+      - name: Every package states the generated license expression
+        run: bash scripts/check-license.sh

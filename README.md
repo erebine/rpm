@@ -39,6 +39,54 @@ To package a specific release instead of the latest, set `TAG`:
 TAG=v0.0.1 ./build.sh
 ```
 
+Prebuilt packages are attached to this repository's
+[releases](https://github.com/erebine/rpm/releases). Each one is also
+published under an unversioned filename that always resolves to the newest
+release, so installing does not start with looking a version up:
+
+``` shell
+curl -fLO https://github.com/erebine/rpm/releases/latest/download/erectl.x86_64.rpm
+sudo dnf install -y ./erectl.x86_64.rpm
+```
+
+The architecture stays in that name -- `erectl.aarch64.rpm` is the 64-bit
+ARM package, built by the same workflow -- so the unversioned filename can
+never resolve to a package built for another machine. The versioned filename
+(`erectl-2.0.0-1.x86_64.rpm`) is attached to the same release for pinning to
+a specific version.
+
+## Licensing
+
+The `License:` tag is not written in the specs. `build.sh` downloads the
+`erebine-license.spec.inc` asset attached to the Erebine/binaries release
+being packaged into the RPM source directory, and every spec `%include`s it
+and takes its `License:` tag from the per-binary SPDX expression it defines.
+That expression is generated from the dependency pins that release's
+binaries were linked from, so it can never describe a different dependency
+set than the binary beside it. The binaries link their Swift dependencies
+statically, so the tag names those licenses too, not a flat `MIT`:
+
+``` shell
+rpm -qp --qf '%{LICENSE}\n' build/RPMS/*/erectl-*.rpm
+# Apache-2.0 AND (Apache-2.0 WITH Swift-exception) AND BSD-3-Clause AND ISC AND MIT AND OpenSSL
+
+rpm -qp --qf '%{URL}\n' build/RPMS/*/erectl-*.rpm
+# https://erebine.ai
+
+rpm -qpL build/RPMS/*/erectl-*.rpm
+# /usr/share/licenses/erectl/LICENSE
+# /usr/share/licenses/erectl/THIRD_PARTY_NOTICES
+```
+
+The release's `LICENSE` and `THIRD_PARTY_NOTICES` are downloaded with it and
+installed as each package's `%license` files. The directory they land in is
+rpm's `%_licensedir`, which follows the host that ran `rpmbuild`, not the host
+that installs: `/usr/share/licenses/erectl/` on RHEL and Rocky, as above, and
+`/usr/share/licenses/erectl-<version>/` on the Debian rpm build the packaging
+workflow runs on. `build.sh` fails if any of the three assets is missing, so a
+release cut before the generated metadata existed cannot produce a package
+whose `License:` tag states only Erebine's own terms.
+
 ## Packages
 
 | Package | Binary | Dependencies |
