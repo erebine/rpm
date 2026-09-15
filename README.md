@@ -63,10 +63,13 @@ rpm -qpL build/RPMS/*/erectl-*.rpm
 ```
 
 The release's `LICENSE` and `THIRD_PARTY_NOTICES` are downloaded with it and
-installed as each package's `%license` files. `build.sh` fails if any of the
-three assets is missing, so a release cut before the generated metadata
-existed cannot produce a package whose `License:` tag states only Erebine's
-own terms.
+installed as each package's `%license` files. The directory they land in is
+rpm's `%_licensedir`, which follows the host that ran `rpmbuild`, not the host
+that installs: `/usr/share/licenses/erectl/` on RHEL and Rocky, as above, and
+`/usr/share/licenses/erectl-<version>/` on the Debian rpm build the packaging
+workflow runs on. `build.sh` fails if any of the three assets is missing, so a
+release cut before the generated metadata existed cannot produce a package
+whose `License:` tag states only Erebine's own terms.
 
 ## Packages
 
