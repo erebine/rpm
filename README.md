@@ -39,6 +39,22 @@ To package a specific release instead of the latest, set `TAG`:
 TAG=v0.0.1 ./build.sh
 ```
 
+Prebuilt packages are attached to this repository's
+[releases](https://github.com/erebine/rpm/releases). Each one is also
+published under an unversioned filename that always resolves to the newest
+release, so installing does not start with looking a version up:
+
+``` shell
+curl -fLO https://github.com/erebine/rpm/releases/latest/download/erectl.x86_64.rpm
+sudo dnf install -y ./erectl.x86_64.rpm
+```
+
+The architecture stays in that name -- `erectl.aarch64.rpm` is the 64-bit
+ARM package, built by the same workflow -- so the unversioned filename can
+never resolve to a package built for another machine. The versioned filename
+(`erectl-2.0.0-1.x86_64.rpm`) is attached to the same release for pinning to
+a specific version.
+
 ## Licensing
 
 The `License:` tag is not written in the specs. `build.sh` downloads the
