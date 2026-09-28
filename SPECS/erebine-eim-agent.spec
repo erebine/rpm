@@ -36,6 +36,7 @@ Requires:       zeromq
 Requires:       libsodium
 Requires:       libzstd
 Requires(pre):  shadow-utils
+Requires(post): shadow-utils
 
 %description
 EIM inference agent for the Erebine platform. Enrolls against a router
@@ -63,6 +64,15 @@ getent passwd erebine >/dev/null || \
 exit 0
 
 %post
+# ROCm GPUs: /dev/kfd and /dev/dri/renderD* belong to video or render,
+# depending on the distribution. Join whichever exist here; naming a
+# group the host lacks in the unit's SupplementaryGroups= would fail the
+# service with 216/GROUP. usermod -a is a no-op for an existing member.
+for group in video render; do
+    if getent group "$group" >/dev/null; then
+        usermod -a -G "$group" erebine
+    fi
+done
 systemctl daemon-reload >/dev/null 2>&1 || :
 
 %preun
