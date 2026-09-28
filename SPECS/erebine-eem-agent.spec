@@ -20,7 +20,7 @@
 Name:           erebine-eem-agent
 Version:        %{?pkgver}%{!?pkgver:0}
 Release:        1%{?dist}
-Summary:        Erebine XEM execution agent
+Summary:        Erebine EEM execution agent
 License:        %{erebine_license_erebine_eem_agent}
 Vendor:         Erebine
 Packager:       Erebine <hello@erebine.ai>
@@ -40,7 +40,7 @@ Requires:       ca-certificates
 Requires(pre):  shadow-utils
 
 %description
-XEM execution agent for the Erebine platform. Enrolls against a router
+EEM execution agent for the Erebine platform. Enrolls against a router
 with a join key and executes tool calls. Configure
 /etc/erebine/eem-agent.env and enable erebine-eem-agent.service.
 

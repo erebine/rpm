@@ -7,7 +7,7 @@
 A high-performance, accelerated intelligence platform.
 
 This repository builds RPM packages for the prebuilt Erebine binaries:
-the `erectl` CLI, the XIM inference agent, and the XEM execution agent.
+the `erectl` CLI, the EIM inference agent, and the EEM execution agent.
 The build pulls the latest stable binaries for this host's architecture
 from the [Erebine/binaries](https://github.com/Erebine/binaries)
 releases, and every package declares the runtime libraries it needs, so
@@ -98,7 +98,7 @@ whose `License:` tag states only Erebine's own terms.
 ## Services
 
 The agent packages install systemd units. Set the join key (and for
-XEM the router URL and registration name) in the env file, then enable
+EEM the router URL and registration name) in the env file, then enable
 the service:
 
 ``` shell

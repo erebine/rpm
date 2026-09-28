@@ -1,10 +1,10 @@
 # SPDX-License-Identifier: MIT
-# Erebine - XEM Agent systemd unit (installed by the erebine-eem-agent
+# Erebine - EEM Agent systemd unit (installed by the erebine-eem-agent
 # package). Configure /etc/erebine/eem-agent.env, then:
 #   sudo systemctl enable --now erebine-eem-agent
 
 [Unit]
-Description=Erebine XEM Agent
+Description=Erebine EEM Agent
 Documentation=https://erebine.ai/docs/private-agents
 After=network-online.target
 Wants=network-online.target
@@ -17,8 +17,8 @@ Group=erebine
 ExecStart=/usr/bin/erebine-eem-agent
 
 # Environment configuration
-Environment=LOG_LEVEL=info
-Environment=TOOLS_DIR=/var/lib/erebine/tools
+Environment=EREBINE_EEM_LOG_LEVEL=info
+Environment=EREBINE_EEM_TOOLS_DIR=/var/lib/erebine/tools
 EnvironmentFile=-/etc/erebine/eem-agent.env
 
 # Runtime directories

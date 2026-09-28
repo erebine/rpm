@@ -20,7 +20,7 @@
 Name:           erebine-eim-agent
 Version:        %{?pkgver}%{!?pkgver:0}
 Release:        1%{?dist}
-Summary:        Erebine XIM inference agent
+Summary:        Erebine EIM inference agent
 License:        %{erebine_license_erebine_eim_agent}
 Vendor:         Erebine
 Packager:       Erebine <hello@erebine.ai>
@@ -38,7 +38,7 @@ Requires:       libzstd
 Requires(pre):  shadow-utils
 
 %description
-XIM inference agent for the Erebine platform. Enrolls against a router
+EIM inference agent for the Erebine platform. Enrolls against a router
 with a join key and serves inference traffic. Set the join key in
 /etc/erebine/eim-agent.env and enable erebine-eim-agent.service.
 
