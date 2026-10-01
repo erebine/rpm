@@ -113,5 +113,34 @@ Both services run as the `erebine` system user (created on install)
 and keep state under `/var/lib/erebine`. The agents enroll on first
 start using the join key from their env file.
 
+The EIM package does not install vLLM. Install it yourself and set
+`EREBINE_AGENT_VLLM_PATH` in `/etc/erebine/eim-agent.env` to the
+absolute path of its `vllm` executable.
+
+### Widening the EEM sandbox
+
+The EEM unit runs its tools in a sandbox: `ProtectHome=yes`,
+`ProtectSystem=strict` with only `/var/lib/erebine` writable, and
+`NoNewPrivileges=yes`. Tools cannot read `/home`, write anywhere else,
+or use `sudo`. To give a workspace more room, add a drop-in rather than
+editing the unit, which a package upgrade replaces:
+
+``` shell
+sudo systemctl edit erebine-eem-agent
+```
+
+``` ini
+[Service]
+ProtectHome=read-only
+ReadWritePaths=/srv/repos
+```
+
+``` shell
+sudo systemctl restart erebine-eem-agent
+```
+
+`ReadWritePaths=` in a drop-in adds to the paths the unit already
+allows. `sudo systemctl revert erebine-eem-agent` removes the drop-in.
+
 Documentation for running the binaries can be found in the
 [docs](https://erebine.ai/docs/private-agents).
